@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>每日好心情</title>
+    <style>
+        :root {
+            --bg-color: #f0f4f8;
+            --card-bg: #ffffff;
+            --accent-color: #ff7e5f;
+            --text-color: #2d3436;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #74ebd5 0%, #9face6 100%);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--text-color);
+        }
+
+        .container {
+            width: 85%;
+            max-width: 400px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+
+        h1 { font-size: 1.5rem; margin-bottom: 20px; color: #4834d4; }
+
+        #quote-box {
+            min-height: 80px;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 30px;
+            color: #34495e;
+            font-style: italic;
+        }
+
+        .btn {
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 50px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: transform 0.2s;
+            box-shadow: 0 4px 15px rgba(255, 126, 95, 0.4);
+        }
+
+        .btn:active { transform: scale(0.95); }
+
+        .time-setting {
+            margin-top: 20px;
+            font-size: 0.8rem;
+            color: #7f8c8d;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🌤 早上好！</h1>
+    <div id="quote-box">正在为你准备今日份的阳光...</div>
+    <button class="btn" onclick="requestPermission()">开启好心情提醒</button>
+    
+    <div class="time-setting">
+        设定每天早上 08:30 准时提醒
+    </div>
+</div>
+
+<script>
+    const quotes = [
+        "今天也是充满希望的一天，记得微笑哦！",
+        "无论乌云多厚，阳光总在背后。加油！",
+        "生活不是等待暴风雨过去，而是在雨中起舞。",
+        "做一个内心自带光源的人，照亮自己也温暖他人。",
+        "把每一个普通的时刻，都过成值得纪念的日子。",
+        "你的心情好坏，决定了世界的底色。",
+        "先变优秀，再遇温柔。早安！"
+    ];
+
+    // 初始化随机语录
+    function updateQuote() {
+        const randomIndex = Math.floor(Math.random() * quotes.length);
+        document.getElementById('quote-box').innerText = `“ ${quotes[randomIndex]} ”`;
+    }
+
+    updateQuote();
+
+    // 请求通知权限
+    function requestPermission() {
+        if (!("Notification" in window)) {
+            alert("抱歉，你的手机浏览器不支持通知功能。");
+            return;
+        }
+
+        Notification.requestPermission().then(permission => {
+            if (permission === "granted") {
+                alert("太棒了！好心情提醒已开启。");
+                scheduleNotification();
+            }
+        });
+    }
+
+    // 设定提醒逻辑 (模拟定时，实际由于浏览器限制，建议添加到主屏幕)
+    function scheduleNotification() {
+        const now = new Date();
+        // 设定为每天 8:30
+        let triggerTime = new Date();
+        triggerTime.setHours(8, 30, 0);
+
+        if (now > triggerTime) {
+            triggerTime.setDate(triggerTime.getDate() + 1);
+        }
+
+        const timeout = triggerTime.getTime() - now.getTime();
+
+        setTimeout(() => {
+            new Notification("好心情广播站", {
+                body: quotes[Math.floor(Math.random() * quotes.length)],
+                icon: "https://cdn-icons-png.flaticon.com/512/869/869869.png"
+            });
+            // 循环设定
+            scheduleNotification();
+        }, timeout);
+    }
+</script>
+
+</body>
+</html>
